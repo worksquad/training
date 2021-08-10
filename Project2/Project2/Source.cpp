@@ -8,15 +8,14 @@ class Tree
 {
 private:
 	string data;
-	vector<Tree*> children = vector<Tree*>();
+	vector<shared_ptr<Tree>> children = vector<shared_ptr<Tree>>();
 public:
 	Tree(string data) { this->data = data; }
 	int childnum() { return children.size(); };
 	string getdata() { return data; }
-	Tree* child(int i) { return children[i]; };
+	Tree* child(int i) { return children[i].get(); };
 	void print() { cout << data << endl; };
-	void add(Tree* child) { children.push_back(child); };
-	~Tree() { for (Tree* c : children) { delete c; } children.clear(); };
+	void add(shared_ptr<Tree> child) { children.push_back(child); };
 };
 
 void printall(Tree* root)
@@ -51,7 +50,8 @@ Tree* createNprint()
 		for (int i = 0; i < 3; i++)
 		{
 			string tstr = temp->getdata() + " " + to_string(i);
-			temp->add(new Tree(tstr));
+			shared_ptr<Tree> tmpc = move(make_shared<Tree>((tstr)));
+			temp->add(tmpc);
 		}
 		temp = temp->child(j);
 	}
